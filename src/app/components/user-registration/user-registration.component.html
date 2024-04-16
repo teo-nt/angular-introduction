@@ -31,11 +31,16 @@
             <input 
                 matInput
                 type="text"
-                formControlName="email" />
-                @if (form.get('email').invalid && form.get('email').touched) {
-                    <mat-error>
-                        Email is missing or invalid
-                    </mat-error>
+                formControlName="email" 
+                (blur)="checkDuplicateEmail()"/>
+                @if (form.get('email').hasError('unavailableEmail')) {
+                    <mat-error>Email is not available</mat-error>
+                } @else {
+                    @if (form.get('email').invalid && form.get('email').touched) {
+                        <mat-error>
+                            Email is missing or invalid
+                        </mat-error>
+                    }
                 }
         </mat-form-field>
         <mat-form-field>

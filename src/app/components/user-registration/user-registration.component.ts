@@ -37,6 +37,23 @@ export class UserRegistrationComponent {
     return {}
   }
 
+  checkDuplicateEmail() {
+    const email = this.form.get('email').value
+    if (!email) return
+    this.userService.checkDuplicateEmail(email).subscribe({
+      next: (response) => {
+        console.log('Email is available', response.msg) 
+        //this.form.get('email').setErrors(null)      
+      },
+      error: (response) => {
+        const message = response.error.msg
+        if (message === 'Email already in use') {
+          this.form.get('email').setErrors({unavailableEmail: true})
+        }
+      }
+    })
+  }
+
   onSubmit(value: any) {
     console.log(value)
 
