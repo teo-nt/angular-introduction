@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Credentials, LoggedInUser } from 'src/app/shared/interfaces/user';
 import { UserService } from 'src/app/shared/services/user.service';
@@ -16,7 +16,7 @@ export class UserLoginComponent {
 
   userService = inject(UserService)
   router = inject(Router)
-
+  route = inject(ActivatedRoute)
   invalidLogin = false;
 
   form = new FormGroup({
@@ -36,7 +36,8 @@ export class UserLoginComponent {
           fullname: decodedTokenSubject.fullname,
           email: decodedTokenSubject.email
         })
-        this.router.navigate(['restricted-content-example'])
+        const url = this.route.snapshot.queryParams['returnUrl'] || '/'
+        this.router.navigate([url])
       },
       error: (response) => {
         console.error("Login error", response.error)

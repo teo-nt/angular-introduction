@@ -7,19 +7,24 @@ import { LoggedInUser } from '../interfaces/user';
 export const authGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService)
   const router = inject(Router)
-  //const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem('access_token')
 
   if (userService.user()) {
     return true;
   } 
 
-  // try {
-  //   if (token && jwtDecode(token).sub as unknown as LoggedInUser) {
-  //     return true;
-  //   }
-  // } catch (err) {
-  //   console.log(err)
-  // }
+  try {
+      if (token) {
+        const decodedToken = jwtDecode(token).sub as unknown as LoggedInUser
+        userService.user.set({
+          fullname: decodedToken.fullname,
+          email: decodedToken.email
+        })
+       return true;
+      }
+   } catch (err) {
+     console.log(err)
+   }
   
-  return router.navigate(['login']);
+  return router.navigate(['login'], { queryParams: { returnUrl: state.url }});
 };
